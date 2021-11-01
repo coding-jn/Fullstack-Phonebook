@@ -85,64 +85,33 @@
     <div class="alert alert-warning hidden" role="alert" id='lastError'></div>
     <div class="alert alert-warning hidden" role="alert" id='numberError'></div>
 
-    <form action='/contacts' method='post' id='form'>
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        <label for="first">First Name</label>
-        <input type="text" class="form-control" id="first" placeholder="First Name" name='first' required>
-      </div>
-      <div class="form-group col-md-6">
-        <label for="last">Last Name</label>
-        <input type="text" class="form-control" id="last" placeholder="Last Name" name='last' required>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="number">Phone Number</label>
-      <input type="text" class="form-control" id="number" placeholder="123-456-7890" name='number' required>
-    </div>
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="text" class="form-control" id="email" placeholder="Email" name='email'>
-    </div>
-    <button type="submit" class="btn btn-primary">Add Contact</button>
-  </form>
-
-  <div class='line'></div>
-
-  <div id='mine'> 
-    <div class='row row-cols-1 row-cols-md-4'>
-      <% for(var i=0; i<contacts.length; i++) {%>
-        <% if(contacts[i].user === user.local.first) {%>
-        <div class='col mb-4'>
-          <div class="card card h-100" style="width: 18rem;" id='contact'>
-          <img class="card-img-top" src="img/profile.webp" alt="Card image cap">
-          <div class="card-body">
-            <h5 class="font-weight-bold card-title"><span id='first'><%= contacts[i].first %></span> <span id='last'><%= contacts[i].last %></span></h5>
-            <ul class="list-unstyled">
-            <li class="mt-25">
-              <span class="text-secondary text-110">Phone Number:</span>
-            </li>
-            <li class="mt-25">
-              <span class="text-110"><%= contacts[i].number %></span>
-            </li>
-
-            <li class="mt-25">
-              <span class="text-secondary text-110">Email:</span>
-            </li>
-            <li class="mt-25">
-              <span class="text-110"><%= contacts[i].email %></span>
-            </li>
-          </ul>
-          <a href='/contacts' class='delete float-right'><i class="far fa-trash-alt"></i></a>
-          <a href='/contactsedit' class='edit float-right' id='edit'><i class="far fa-edit"></i></a>
+    <form id='form'>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="first">First Name</label>
+            <input type="text" class="form-control" id="first" placeholder="First Name" name='updatedFirst' value='<%= contactsedit[contactsedit.length-1].first %>' required>
+            <data-oldFirst><%= contactsedit[contactsedit.length-1].first %></data-oldFirst>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="last">Last Name</label>
+            <input type="text" class="form-control" id="last" placeholder="Last Name" name='updatedLast' value='<%= contactsedit[contactsedit.length-1].last %>' required>
+            <data-oldLast><%= contactsedit[contactsedit.length-1].last %></data-oldLast>
           </div>
         </div>
-      </div>
-      <% } %>
-      <% } %>
+        <div class="form-group">
+          <label for="number">Phone Number</label>
+          <input type="text" class="form-control" id="number" placeholder="123-456-7890" name='updatedNumber' value='<%= contactsedit[contactsedit.length-1].number %>' required>
+          <data-oldNumber><%= contactsedit[contactsedit.length-1].number %></data-oldNumber>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="text" class="form-control" id="email" placeholder="Email" name='updatedEmail' value='<%= contactsedit[contactsedit.length-1].email  %>'>
+          <data-oldEmail><%= contactsedit[contactsedit.length-1].email %></data-oldEmail>
+        </div>
+        <button type="button" class="save btn btn-primary" id='save'>Save</button>
+  </form>
   </div>
-  </div>
-
+  
 <script src="main.js"></script>
 <!-- jQuery CDN - Slim version (=without AJAX) -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -173,6 +142,7 @@
   document.getElementById("number").oninvalid = function() {numberError()};
   document.getElementById("number").oninput = function() {numberSuccess()};
   document.getElementById('form').onsubmit = function() {success()};
+
   function firstError() {
     document.getElementById('firstError').innerText = 'Please enter a first name'
     document.getElementById('firstError').classList.remove('hidden')

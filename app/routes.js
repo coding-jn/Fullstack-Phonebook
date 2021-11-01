@@ -28,6 +28,16 @@ module.exports = function(app, passport, db) {
         })
     });
 
+    app.get('/contactsedit', function(req, res) {
+        db.collection('contactsedit').find().toArray((err, result) => {
+          if (err) return console.log(err)
+          res.render('contactsedit.ejs', {
+            user : req.user,
+            contactsedit: result,
+          })
+        })
+    });
+
     // LOGOUT ==============================
     app.get('/logout', function(req, res) {
         req.logout();
@@ -44,6 +54,25 @@ module.exports = function(app, passport, db) {
       })
     })
 
+    app.put('/contacts', (req, res) => {
+        console.log(req.body)
+        db.collection('contacts')
+        .findOneAndUpdate({user: req.body.user, first: req.body.oldFirst, last: req.body.oldLast, number: req.body.oldNumber, email: req.body.oldEmail}, {
+          $set: {
+            first: req.body.updatedFirst,
+            last: req.body.updatedLast,
+            number: req.body.updatedNumber,
+            email: req.body.updatedEmail
+          }
+        }, {
+          sort: {_id: -1},
+          upsert: true
+        }, (err, result) => {
+          if (err) return res.send(err)
+          res.send(result)
+        })
+      })
+
     app.post('/phonebook', isLoggedIn, (req, res) => {
         db.collection('contacts').insertOne({user: req.user.local.first, first: req.body.first, last: req.body.last, number: req.body.number, email: req.body.email, method: 'copy'}, (err, result) => {
           if (err) return console.log(err)
@@ -51,6 +80,14 @@ module.exports = function(app, passport, db) {
           setTimeout(() => {res.redirect('/phonebook')}, 1000)
         })
     })
+
+    app.post('/contactsedit', function(req, res) {
+        db.collection('contactsedit').insertOne({user: req.body.user, first: req.body.oldFirst, last: req.body.oldLast, number: req.body.oldNumber, email: req.body.oldEmail}, (err, result) => {
+            if (err) return console.log(err)
+            console.log('saved to database')
+            res.redirect('/contactsedit')
+        })
+    });
 
     app.delete('/contacts', isLoggedIn, (req, res) => { 
         db.collection('contacts').findOneAndDelete({user: req.body.user, first: req.body.first, last: req.body.last}, (err, result) => {
