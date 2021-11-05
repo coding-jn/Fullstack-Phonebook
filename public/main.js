@@ -83,7 +83,7 @@ Array.from(save).forEach(function(element) {
           'user': user
         })
       }).then(function (response) {
-        window.location.reload()
+        window.location.href = 'http://localhost:8080/contacts#mine'   
       })
     });
 });

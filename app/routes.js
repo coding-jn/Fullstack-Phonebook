@@ -8,7 +8,7 @@ module.exports = function(app, passport, db) {
         res.render('signup.ejs', { message: req.flash('signupMessage') })    });
 
     // PROFILE SECTION =========================
-    app.get('/contacts', function(req, res) {
+    app.get('/contacts', isLoggedIn, function(req, res) {
         db.collection('contacts').find().toArray((err, result) => {
           if (err) return console.log(err)
           res.render('contacts.ejs', {
@@ -18,7 +18,7 @@ module.exports = function(app, passport, db) {
         })
     });
     
-    app.get('/phonebook', function(req, res) {
+    app.get('/phonebook', isLoggedIn, function(req, res) {
         db.collection('contacts').find().toArray((err, result) => {
           if (err) return console.log(err)
           res.render('phonebook.ejs', {
@@ -28,7 +28,7 @@ module.exports = function(app, passport, db) {
         })
     });
 
-    app.get('/contactsedit', function(req, res) {
+    app.get('/contactsedit', isLoggedIn, function(req, res) {
         db.collection('contactsedit').find().toArray((err, result) => {
           if (err) return console.log(err)
           res.render('contactsedit.ejs', {
@@ -46,7 +46,7 @@ module.exports = function(app, passport, db) {
 
 // message board routes ===============================================================
 
-    app.post('/contacts', isLoggedIn, (req, res) => {
+    app.post('/contacts', (req, res) => {
       db.collection('contacts').insertOne({user: req.user.local.first, first: req.body.first, last: req.body.last, number: req.body.number, email: req.body.email, method: 'new'}, (err, result) => {
         if (err) return console.log(err)
         console.log('saved to database')
@@ -73,7 +73,7 @@ module.exports = function(app, passport, db) {
         })
       })
 
-    app.post('/phonebook', isLoggedIn, (req, res) => {
+    app.post('/phonebook', (req, res) => {
         db.collection('contacts').insertOne({user: req.user.local.first, first: req.body.first, last: req.body.last, number: req.body.number, email: req.body.email, method: 'copy'}, (err, result) => {
           if (err) return console.log(err)
           console.log('saved to database')
@@ -89,7 +89,7 @@ module.exports = function(app, passport, db) {
         })
     });
 
-    app.delete('/contacts', isLoggedIn, (req, res) => { 
+    app.delete('/contacts', (req, res) => { 
         db.collection('contacts').findOneAndDelete({user: req.body.user, first: req.body.first, last: req.body.last}, (err, result) => {
             if (err) return res.send(500, err)
             res.send('Message deleted!')
@@ -149,7 +149,7 @@ module.exports = function(app, passport, db) {
 // route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated())
-        return next(null, true);
+      return next(null, true);
 
-    res.redirect('/contacts');
+    res.redirect('/');
 }
